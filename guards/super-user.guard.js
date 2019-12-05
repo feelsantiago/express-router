@@ -1,4 +1,4 @@
-export const SuperUserGuard = ({ body: { email } }) => {
+export const SuperUserGuard = ({ body: { email } }, res) => {
 	if (email === 'super@user.com') {
 		return true;
 	}

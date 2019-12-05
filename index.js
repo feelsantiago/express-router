@@ -8,8 +8,9 @@ const app = express();
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
-initRoutes(routes);
+const router = initRoutes(routes);
+app.use(router);
 
-app.listen(3000, function() {
+app.listen(3000, function () {
 	console.log('Server listening on port 3000!');
 });

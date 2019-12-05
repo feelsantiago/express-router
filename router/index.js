@@ -3,9 +3,9 @@ import { Router } from 'express';
 const concatRoute = (basePath, routes, baseGuards) => {
 	baseGuards = baseGuards ? baseGuards : [];
 
-	const route = routes.map(({ path, method, guards }) => {
+	const route = routes.map(({ path, method, guards, action }) => {
 		if (path === '') return { path: basePath, method, guards: baseGuards };
-		return { path: `${basePath}/${path}`, method, guards: guards ? baseGuards.concat(guards) : baseGuards };
+		return { path: `${basePath}/${path}`, method, guards: guards ? baseGuards.concat(guards) : baseGuards, action };
 	});
 
 	return route;
@@ -16,8 +16,8 @@ const getRoutes = routes =>
 		.map(route => {
 			// No sub-routes
 			if (!route.routes) {
-				const { path, method, guards } = route;
-				return [ { path, method, guards: guards ? guards : [] } ];
+				const { path, method, guards, action } = route;
+				return [ { path, method, guards: guards ? guards : [], action } ];
 			}
 
 			return concatRoute(route.path, route.routes, route.guards);
@@ -38,13 +38,17 @@ export const initRoutes = routes => {
 	const router = Router();
 
 	mappedRoutes.forEach(route => {
-		router[route.method.toLowerCase()](route.path, async (req, res, next) => {
-			const guardResult = await handleGuards(route.guards, req, res);
-			if (!guardResult) return res;
+		router[route.method.toLowerCase()](
+			route.path,
+			async (req, res, next) => {
+				const guardResult = await handleGuards(route.guards, req, res);
+				if (!guardResult) return res;
 
-			await next();
-		});
+				await next();
+			},
+			async (req, res) => await route.action(req, res)
+		);
 	});
 
-	console.log(mappedRoutes);
+	return router;
 };

@@ -1,21 +1,27 @@
 import { AuthGuard } from './guards/auth.guard';
 import { SuperUserGuard } from './guards/super-user.guard';
+import AppController from './controllers/app.controller';
+import AuthController from './controllers/auth.controller';
+import UserController from './controllers/user.controller';
 
 const routes = [
 	{
 		path   : '',
-		method : 'GET'
+		method : 'GET',
+		action : AppController.index
 	},
 	{
 		path   : 'auth',
 		routes : [
 			{
 				path   : 'login',
-				method : 'POST'
+				method : 'POST',
+				action : AuthController.auth
 			},
 			{
 				path   : 'register',
-				method : 'POST'
+				method : 'POST',
+				action : AuthController.register
 			}
 		]
 	},
@@ -25,20 +31,24 @@ const routes = [
 		routes : [
 			{
 				path   : '',
-				method : 'POST'
+				method : 'POST',
+				action : UserController.create
 			},
 			{
 				path   : '',
-				method : 'GET'
+				method : 'GET',
+				action : UserController.get
 			},
 			{
 				path   : ':id',
-				method : 'PUT'
+				method : 'PUT',
+				action : UserController.update
 			},
 			{
 				path   : ':id',
 				guards : [ SuperUserGuard ],
-				method : 'DELETE'
+				method : 'DELETE',
+				action : UserController.delete
 			}
 		]
 	}

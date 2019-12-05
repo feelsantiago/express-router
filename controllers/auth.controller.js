@@ -8,4 +8,5 @@ class AuthController {
 	}
 }
 
-export const appController = new AuthController();
+const authController = new AuthController();
+export default authController;

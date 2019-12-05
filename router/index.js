@@ -4,8 +4,13 @@ const concatRoute = (basePath, routes, baseGuards) => {
 	baseGuards = baseGuards ? baseGuards : [];
 
 	const route = routes.map(({ path, method, guards, action }) => {
-		if (path === '') return { path: basePath, method, guards: baseGuards };
-		return { path: `${basePath}/${path}`, method, guards: guards ? baseGuards.concat(guards) : baseGuards, action };
+		if (path === '') return { path: `/${basePath}`, method, guards: baseGuards };
+		return {
+			path: `/${basePath}/${path}`,
+			method,
+			guards: guards ? baseGuards.concat(guards) : baseGuards,
+			action
+		};
 	});
 
 	return route;
@@ -17,7 +22,7 @@ const getRoutes = routes =>
 			// No sub-routes
 			if (!route.routes) {
 				const { path, method, guards, action } = route;
-				return [ { path, method, guards: guards ? guards : [], action } ];
+				return [ { path: `/${path}`, method, guards: guards ? guards : [], action } ];
 			}
 
 			return concatRoute(route.path, route.routes, route.guards);
